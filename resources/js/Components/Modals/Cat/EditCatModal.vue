@@ -24,7 +24,7 @@ const value = computed({
 const saveCat = (params) => {
     params.id = props.cat.id;
     axios
-        .put('/cats/update', params)
+        .put(route('cats.update'), params)
         .then(() => {
             emit('edited');
             value.value = false;

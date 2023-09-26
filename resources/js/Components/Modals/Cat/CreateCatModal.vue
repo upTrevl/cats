@@ -24,7 +24,7 @@ const value = computed({
 
 const saveCat = (params) => {
     axios
-        .post('/cats/store', params)
+        .post(route('cats.store'), params)
         .then(() => {
             emit('created');
             value.value = false;

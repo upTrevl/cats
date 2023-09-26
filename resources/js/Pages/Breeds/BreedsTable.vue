@@ -96,7 +96,7 @@ const showDeleteModal = (item) => {
 
 const deleteBreed = () => {
     axios
-        .delete('/breeds/delete/' + deletableBreed.value.id)
+        .delete(route('breeds.delete', {id: deletableBreed.value.id}))
         .then(() => {
             showDeleteBreedModal.value = false;
             getBreeds();
@@ -111,7 +111,7 @@ const getBreeds = () => {
         page: page.value,
     };
     axios
-        .get('/breeds/get', {params})
+        .get(route('breeds.get'), {params})
         .then((response) => {
             breeds.value = response.data.items
             total.value = response.data.total

@@ -1,29 +1,27 @@
 <template>
-    <el-dialog v-model="value" :title="cat.name" width="30%" draggable :close-on-click-modal="false">
+    <el-dialog v-model="value" :title="cat.name" width="30%" draggable>
         <div class="grid grid-cols-2 gap-4 ">
             <div>
                 <el-image style="width: 100%; height: 240px" :fit="'contain'" :src="cat.image.storage_name"/>
             </div>
-            <div>
-                <div>
-                    <span>Имя:</span> {{ cat.name }}
+            <div class="text-base">
+                <div class="mb-2">
+                    <span class="text-gray-500 font-semibold">Имя:</span> {{ cat.name }}
                 </div>
-                <div>
-                    <span>Возраст: {{ cat.age }}</span>
+                <div class="mb-2">
+                    <span class="text-gray-500 font-semibold">Возраст:</span> {{ cat.age }}
                 </div>
-                <div>
-                    <span>Порода: {{ cat.breed.name }}</span>
+                <div class="mb-2">
+                    <span class="text-gray-500 font-semibold">Порода:</span> {{ cat.breed.name }}
                 </div>
-                <div>
-                    <span>Средняя продолжительность жизни: {{ cat.breed.avg_age }}</span>
+                <div class="mb-2">
+                    <span class="text-gray-500 font-semibold">Средняя продолжительность жизни:</span>
+                    {{ cat.breed.avg_age }}
+                </div>
+                <div class="mb-2">
+                    <span class="text-gray-500 font-semibold">Описание:</span> {{ cat.breed.description }}
                 </div>
             </div>
-        </div>
-        <div>
-            <div>
-                Описание:
-            </div>
-            {{ cat.breed.description }}
         </div>
     </el-dialog>
 </template>

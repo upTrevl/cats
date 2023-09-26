@@ -26,7 +26,7 @@ const value = computed({
 const saveBreed = (params) => {
     params.id = props.breed.id;
     axios
-        .put('/breeds/update', params)
+        .put(route('breeds.update'), params)
         .then(() => {
             emit('edited');
             value.value = false;

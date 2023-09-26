@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Entities\BreedEntity;
 use App\Http\Requests\StoreBreedRequest;
 use App\Http\Requests\UpdateBreedRequest;
 use App\Models\Breed;
-use App\Models\Cat;
+use App\Repositories\BreedsRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,6 +15,12 @@ use Inertia\Response;
 
 class BreedController extends Controller
 {
+    public function __construct(
+        private readonly BreedsRepository $breedsRepository
+    )
+    {
+    }
+
     public function index(): Response
     {
         return Inertia::render('Breeds/BreedsTable');
@@ -43,40 +50,43 @@ class BreedController extends Controller
 
     public function store(StoreBreedRequest $request): JsonResponse
     {
-        $breed = new Breed();
-        $breed->name = $request->name;
-        $breed->description = $request->description;
-        $breed->avg_age = $request->avg_age;
-        $breed->save();
+        $breedEntity = new BreedEntity(
+            id: null,
+            name: $request->name,
+            description: $request->description,
+            avg_age: $request->avg_age
+        );
+        $this->breedsRepository->store($breedEntity);
 
         return response()->json([
             'success' => true,
         ]);
     }
 
-    public function update(UpdateBreedRequest $request, Breed $breed): JsonResponse|RedirectResponse
+    public function update(UpdateBreedRequest $request): JsonResponse|RedirectResponse
     {
-        $breed = Breed::find($request->id);
+        $breedEntity = new BreedEntity(
+            id: $request->id,
+            name: $request->name,
+            description: $request->description,
+            avg_age: $request->avg_age
+        );
+
+        $breed = $this->breedsRepository->update($breedEntity);
         if (!$breed) {
             return back()->withErrors('breed_not_found');
         }
 
-        $breed->name = $request->name;
-        $breed->description = $request->description;
-        $breed->avg_age = $request->avg_age;
-
-        $breed->save();
-
         return response()->json([
             'success' => true,
         ]);
     }
 
 
-    public function destroy(Breed $breed, int $breedId)
+    public function destroy(Request $request, int $breedId): JsonResponse|RedirectResponse
     {
         $breed = Breed::find($breedId);
-        if(!$breed){
+        if (!$breed) {
             return back()->withErrors('breed_not_found');
         }
 

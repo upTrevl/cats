@@ -59,7 +59,7 @@ const props = defineProps({
                 age: null,
                 image_id: 0,
                 image: {
-                    storage_name: ''
+                    storage_name: null
                 },
                 breed: {
                     name: '',
@@ -84,7 +84,7 @@ const searchBreeds = (queryString: string, cb: any) => {
         search_query: queryString,
     };
     axios
-        .get('/breeds/search', {params})
+        .get(route('breeds.search'), {params})
         .then((response) => {
             cb(response.data);
         });
@@ -93,7 +93,7 @@ const searchBreeds = (queryString: string, cb: any) => {
 
 const getRandomImage = () => {
     axios
-        .get('/cats/get-random-image')
+        .get(route('cats.get-random-image'))
         .then((response) => {
             preview.value = response.data.storage_name;
             form.file_id = response.data.id;
@@ -105,7 +105,7 @@ const handleSelect = (item) => {
 }
 
 onMounted(() => {
-    if (!preview) {
+    if (!preview.value) {
         getRandomImage();
     }
 })

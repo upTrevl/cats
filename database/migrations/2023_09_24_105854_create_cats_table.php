@@ -13,7 +13,9 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->integer('age');
-            $table->unsignedBigInteger('breed_id');
+            $table->foreignId('breed_id')
+                ->constrained()
+                ->onDelete('cascade');
             $table->unsignedBigInteger('image_id');
             $table->timestamps();
         });

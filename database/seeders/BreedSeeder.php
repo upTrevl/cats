@@ -3,29 +3,25 @@
 namespace Database\Seeders;
 
 use App\Models\Breed;
+use App\Repositories\BreedsRepository;
 use App\Services\Images\CatsService;
 use Illuminate\Database\Seeder;
 
 class BreedSeeder extends Seeder
 {
-    public function __construct(private readonly CatsService $catsService)
+    public function __construct(
+        private readonly CatsService      $catsService,
+        private readonly BreedsRepository $breedsRepository,
+    )
     {
     }
 
     public function run(): void
     {
-        $breeds = $this->catsService->getBreeds();
+        $breedEntities = $this->catsService->getBreeds();
 
-        foreach ($breeds as $breed) {
-            $lifeSpan = explode(" - ", $breed['life_span']);
-            $avgAge = array_sum($lifeSpan) / 2;
-
-            $breedModel = new Breed();
-            $breedModel->name = $breed['name'];
-            $breedModel->description = $breed['description'];
-            $breedModel->avg_age = $avgAge;
-
-            $breedModel->save();
+        foreach ($breedEntities as $breedEntity) {
+            $this->breedsRepository->store($breedEntity);
         }
     }
 }

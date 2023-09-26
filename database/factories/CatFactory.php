@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Breed;
+use App\Repositories\FilesRepository;
 use App\Services\Images\CatsService;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -13,8 +14,11 @@ class CatFactory extends Factory
     public function definition(): array
     {
         $catsService = app()->make(CatsService::class);
+        $filesRepository = app()->make(FilesRepository::class);
 
-        $image = $catsService->getRandomImage();
+        $fileEntity = $catsService->getRandomImage();
+        $file = $filesRepository->store($fileEntity);
+
         $age = random_int(1, self::MAX_CATS_AGE);
         $breed = Breed::inRandomOrder()->first();
 
@@ -22,7 +26,7 @@ class CatFactory extends Factory
             'name' => fake()->name(),
             'age' => $age,
             'breed_id' => $breed->id,
-            'image_id' => $image->id
+            'image_id' => $file->id
         ];
     }
 }

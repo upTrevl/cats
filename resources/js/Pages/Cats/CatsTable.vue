@@ -65,16 +65,17 @@
 </template>
 
 <script lang="ts" setup>
-import {Edit, Delete, Plus, View} from "@element-plus/icons-vue";
 import axios from 'axios';
+
+import {Edit, Delete, Plus, View} from "@element-plus/icons-vue";
+import {onMounted, ref} from "vue";
+
 import AppLayout from "@/Layouts/AppLayout.vue";
 import CreateCatModal from "@/Components/Modals/Cat/CreateCatModal.vue";
-import {onMounted, ref} from "vue";
 import ConfirmModal from "@/Components/Modals/ConfirmModal.vue";
 import DetailedCatModal from "@/Components/Modals/Cat/DetailedCatModal.vue";
 import EditCatModal from "@/Components/Modals/Cat/EditCatModal.vue";
 
-const loading = ref(false);
 const showCreateCatModal = ref(false);
 const showDeleteCatModal = ref(false);
 const showDetailedCatModal = ref(false);
@@ -120,7 +121,7 @@ const showCatModal = (item) => {
 
 const deleteCat = () => {
     axios
-        .delete('/cats/delete/' + deletableCat.value.id)
+        .delete(route('cats.delete', {id: deletableCat.value.id}))
         .then(() => {
             showDeleteCatModal.value = false;
             getCats();
@@ -135,7 +136,7 @@ const getCats = () => {
         page: page.value,
     };
     axios
-        .get('/cats/get', {params})
+        .get(route('cats.get'), {params})
         .then((response) => {
             cats.value = response.data.items
             total.value = response.data.total
@@ -156,15 +157,4 @@ onMounted(() => {
 </script>
 
 <style>
-.el-table .warning-row {
-    background-color: var(--el-color-warning-light-9);
-}
-
-.el-table .success-row {
-    background-color: var(--el-color-success-light-9);
-}
-
-.el-table .danger-row {
-    --el-table-tr-bg-color: var(--el-color-error-light-9);
-}
 </style>

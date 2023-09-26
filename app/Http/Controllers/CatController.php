@@ -2,21 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Entities\CatEntity;
 use App\Http\Requests\StoreCatRequest;
 use App\Http\Requests\UpdateCatRequest;
 use App\Models\Cat;
+use App\Repositories\CatsRepository;
+use App\Repositories\FilesRepository;
 use App\Services\Images\CatsService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class CatController extends Controller
 {
-    public function __construct(private readonly CatsService $catsService)
+    public function __construct(
+        private readonly CatsService     $catsService,
+        private readonly CatsRepository  $catsRepository,
+        private readonly FilesRepository $filesRepository,
+    )
     {
+        //
     }
 
     public function index(): Response
@@ -39,13 +46,14 @@ class CatController extends Controller
 
     public function store(StoreCatRequest $request): JsonResponse
     {
-        $cat = new Cat();
-        $cat->name = $request->name;
-        $cat->age = $request->age;
-        $cat->breed_id = $request->breed_id;
-        $cat->image_id = $request->file_id;
-
-        $cat->save();
+        $catEntity = new CatEntity(
+            id: null,
+            name: $request->name,
+            breed_id: $request->breed_id,
+            age: $request->age,
+            file_id: $request->file_id
+        );
+        $this->catsRepository->store($catEntity);
 
         return response()->json([
             'success' => true,
@@ -55,17 +63,17 @@ class CatController extends Controller
 
     public function update(UpdateCatRequest $request): JsonResponse|RedirectResponse
     {
-        $cat = Cat::find($request->id);
+        $catEntity = new CatEntity(
+            id: $request->id,
+            name: $request->name,
+            breed_id: $request->breed_id,
+            age: $request->age,
+            file_id: $request->file_id
+        );
+        $cat = $this->catsRepository->update($catEntity);
         if (!$cat) {
             return back()->withErrors('cat_not_found');
         }
-
-        $cat->name = $request->name;
-        $cat->age = $request->age;
-        $cat->breed_id = $request->breed_id;
-        $cat->image_id = $request->file_id;
-
-        $cat->save();
 
         return response()->json([
             'success' => true,
@@ -75,7 +83,7 @@ class CatController extends Controller
     public function destroy(Request $request, int $catId): JsonResponse|RedirectResponse
     {
         $cat = Cat::find($catId);
-        if(!$cat){
+        if (!$cat) {
             return back()->withErrors('cat_not_found');
         }
 
@@ -87,6 +95,7 @@ class CatController extends Controller
 
     public function getRandomImage(Request $request): \App\Models\File
     {
-        return $this->catsService->getRandomImage();
+        $fileEntity = $this->catsService->getRandomImage();
+        return $this->filesRepository->store($fileEntity);
     }
 }

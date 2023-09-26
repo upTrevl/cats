@@ -7,12 +7,12 @@
         <el-menu mode="horizontal">
             <div class="container mx-auto flex">
                 <el-menu-item index="/">
-                    <el-link :underline="false" :href="'/'">
+                    <el-link :underline="false" :href="route('cats')">
                         Коты
                     </el-link>
                 </el-menu-item>
                 <el-menu-item index="/breeds">
-                    <el-link :underline="false" :href="'/breeds'">
+                    <el-link :underline="false" :href="route('breeds.index')">
                         Породы
                     </el-link>
                 </el-menu-item>
