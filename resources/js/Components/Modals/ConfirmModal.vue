@@ -6,7 +6,7 @@
             <el-button @click="value = false">
                 Отмена
             </el-button>
-            <el-button type="danger" @click="$emit('confirm')">
+            <el-button type="danger" @click="emit('confirm')">
                 Подтверждаю
             </el-button>
           </span>
@@ -18,7 +18,7 @@
 import {computed, defineEmits, defineProps} from "vue";
 
 const props = defineProps(['modelValue', 'title'])
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'confirm'])
 
 const value = computed({
     get() {

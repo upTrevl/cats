@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CatFactory extends Factory
 {
-    const MAX_CATS_AGE = 30;
+    const MAX_CATS_AGE = 20;
 
     public function definition(): array
     {

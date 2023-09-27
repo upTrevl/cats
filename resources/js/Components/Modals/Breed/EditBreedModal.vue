@@ -1,18 +1,23 @@
 <template>
     <el-dialog v-model="value" title="Редактирование породы" width="20%" draggable :close-on-click-modal="false">
-        <breed-form @close="value = false" @save="saveBreed" :breed="breed"/>
+        <breed-form @close="value = false" @save="saveBreed" :breed="breed" :errors="errors" @clear-error="clearError"/>
     </el-dialog>
 </template>
 
 <script setup>
 import axios from "axios";
 
-import {defineProps, defineEmits, computed} from "vue";
+import {defineProps, defineEmits, computed, ref} from "vue";
 
 import BreedForm from "@/Components/Forms/BreedForm.vue";
 
 const props = defineProps(['modelValue', 'breed'])
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'edited'])
+const errors = ref({
+    name: [],
+    description: [],
+    avg_age: [],
+});
 
 const value = computed({
     get() {
@@ -30,10 +35,24 @@ const saveBreed = (params) => {
         .then(() => {
             emit('edited');
             value.value = false;
+            clearErrors();
         })
         .catch((error) => {
-            console.log(error);
+            clearErrors();
+            errors.value = Object.assign(errors.value, error.response.data.errors);
         });
+}
+
+const clearErrors = () => {
+    errors.value = {
+        name: [],
+        description: [],
+        avg_age: [],
+    };
+}
+
+const clearError = (field) => {
+    errors.value[field] = [];
 }
 
 </script>

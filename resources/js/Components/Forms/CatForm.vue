@@ -2,10 +2,10 @@
     <el-form :label-position="'top'">
         <div class="grid grid-cols-2 gap-4">
             <div>
-                <el-form-item label="Имя">
-                    <el-input type="text" v-model="form.name"/>
+                <el-form-item label="Имя" :error="errors.name[0]">
+                    <el-input type="text" v-model="form.name" @input="emit('clear-error', 'name')"/>
                 </el-form-item>
-                <el-form-item label="Порода">
+                <el-form-item label="Порода" :error="errors.breed_id[0]">
                     <el-autocomplete
                         v-model="currentBreed"
                         :fetch-suggestions="searchBreeds"
@@ -15,8 +15,8 @@
                         @select="handleSelect"
                     />
                 </el-form-item>
-                <el-form-item label="Возраст">
-                    <el-input type="number" min="1" max="100" v-model="form.age">
+                <el-form-item label="Возраст" :error="errors.age[0]">
+                    <el-input type="number" min="1" max="100" v-model="form.age" @input="emit('clear-error', 'age')">
                         <template #append>лет</template>
                     </el-input>
                 </el-form-item>
@@ -33,10 +33,10 @@
             </div>
         </div>
         <div class="flex justify-center mt-6">
-            <el-button @click="$emit('close')">
+            <el-button @click="emit('close')">
                 Закрыть
             </el-button>
-            <el-button type="primary" @click="$emit('save', form)">
+            <el-button type="primary" @click="emit('save', form)">
                 Сохранить
             </el-button>
         </div>
@@ -46,10 +46,21 @@
 
 <script lang="ts" setup>
 import axios from "axios";
-import {onMounted, ref, reactive, defineProps} from "vue";
+import {onMounted, ref, reactive, defineProps, defineEmits} from "vue";
 import {Refresh} from "@element-plus/icons-vue";
 
+const emit = defineEmits(['clear-error', 'save', 'close'])
 const props = defineProps({
+    errors: {
+        type: Object,
+        default() {
+            return {
+                name: [],
+                breed_id: [],
+                age: [],
+            }
+        }
+    },
     cat: {
         type: Object,
         default() {
@@ -59,7 +70,7 @@ const props = defineProps({
                 age: null,
                 image_id: 0,
                 image: {
-                    storage_name: null
+                    storage_name: ''
                 },
                 breed: {
                     name: '',
@@ -101,6 +112,7 @@ const getRandomImage = () => {
 }
 
 const handleSelect = (item) => {
+    emit('clear-error', 'breed_id');
     form.breed_id = item.id;
 }
 
